@@ -111,7 +111,7 @@ let
       #!${runtimeShell}
       if [[ -d /config ]]; then
          exec ${cardano-tx-submit-webapi}/bin/cardano-tx-submit-webapi \
-           --socket-path /data/node.socket
+           --socket-path /data/node.socket \
            --genesis-file /config/genesis.json \
            --port 3001 \
            --config /data/config.yaml

@@ -29,9 +29,9 @@ let
   #};
 
   dockerImage = let
+    stateDir = "/data";
     defaultConfig = rec {
-      stateDir = "/data";
-      socketPath = stateDir + "/node.socket";
+      services.cardano-tx-submit-api.socketPath = stateDir + "/node.socket";
     };
     customConfig' = defaultConfig // customConfig;
   in pkgs.callPackage ./nix/docker.nix {
