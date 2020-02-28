@@ -77,7 +77,7 @@ let
       mkdir -m 0777 tmp
     '';
   };
-  apiDockerImage = let
+  explorerApiDockerImage = let
     entry-point = writeScriptBin "entry-point" ''
       #!${runtimeShell}
       #echo $NETWORK
@@ -85,7 +85,7 @@ let
         echo PGPASSFILE = "/config/pgpass";
         exec ${cardano-explorer-api}/bin/cardano-explorer-api
       else
-        echo "Please place the pgpass file with credentials for postgres in /config"
+        echo "Please mount the pgpass file with credentials for postgres in /config"
       fi
     '';
   in dockerTools.buildImage {
@@ -135,6 +135,6 @@ let
   };
 
 in {
-  explorerApi = apiDockerImage;
+  explorerApi = explorerApiDockerImage;
   txSubmit = txSubmitDockerImage;
 }
