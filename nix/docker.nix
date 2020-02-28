@@ -72,17 +72,22 @@ let
       socat             # Utility for bidirectional data transfer
       utillinux         # System utilities for Linux
     ];
-    # set up /tmp (override with TMPDIR variable)
-    extraCommands = ''
-      mkdir -m 0777 tmp
-    '';
+  };
+  # this will ensure the entry-point script is in a seperate layer, making the diff's smaller
+  explorerApiWithoutConfigImage = dockerTools.buildImage {
+    name = "explorer-api-without-config";
+    fromImage = baseImage;
+    contents = [
+      cardano-explorer-api
+    ];
   };
   explorerApiDockerImage = let
     entry-point = writeScriptBin "entry-point" ''
       #!${runtimeShell}
-      #echo $NETWORK
+      # set up /tmp (override with TMPDIR variable)
+      mkdir -m 1777 tmp
       if [[ -d /config ]]; then
-        echo PGPASSFILE = "/config/pgpass";
+        export PGPASSFILE="/config/pgpass";
         exec ${cardano-explorer-api}/bin/cardano-explorer-api
       else
         echo "Please mount the pgpass file with credentials for postgres in /config"
@@ -90,7 +95,7 @@ let
     '';
   in dockerTools.buildImage {
     name = "${explorerApiRepoName}";
-    fromImage = baseImage;
+    fromImage = explorerApiWithoutConfigImage;
     tag = "${gitrev}";
     created = "now";   # Set creation date to build time. Breaks reproducibility
     contents = [ entry-point ];
@@ -101,13 +106,24 @@ let
       };
     };
   };
+  txSubmitWithoutConfig = dockerTools.buildImage {
+    name = "tx-submit-without-config";
+    contents = [
+      cardano-tx-submit-webapi
+    ];
+  };
   txSubmitDockerImage = let
     clusterStatements = lib.concatStringsSep "\n" (lib.mapAttrsToList (_: value: value) (commonLib.forEnvironments (env: ''
       elif [[ "$NETWORK" == "${env.name}" ]]; then
-        exec ${scripts.${env.name}.tx-submit}
+        ${if (env ? txSubmitConfig) then "exec ${scripts.${env.name}.tx-submit}"
+        else ''
+          tx submission not supported on ${env.name}
+            exit 1''}
     '')));
     entry-point = writeScriptBin "entry-point" ''
       #!${runtimeShell}
+      # set up /tmp (override with TMPDIR variable)
+      mkdir -m 1777 tmp
       if [[ -d /config ]]; then
          exec ${cardano-tx-submit-webapi}/bin/cardano-tx-submit-webapi \
            --socket-path /data/node.socket \
@@ -122,7 +138,7 @@ let
     '';
   in dockerTools.buildImage {
     name = "${txSubmitRepoName}";
-    fromImage = baseImage;
+    fromImage = txSubmitWithoutConfig;
     tag = "${gitrev}";
     created = "now";   # Set creation date to build time. Breaks reproducibility
     contents = [ entry-point ];

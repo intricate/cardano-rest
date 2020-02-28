@@ -9,7 +9,7 @@ let
 in {
   options = {
     services.cardano-tx-submit = {
-      enable = lib.mkEnableOption "enable the cardano-explorer tx submitter api";
+      enable = lib.mkEnableOption "enable the cardano-tx-submit api";
       script = lib.mkOption {
         internal = true;
         type = lib.types.package;
@@ -43,7 +43,7 @@ in {
         echo "You must set \$CARDANO_NODE_SOCKET_PATH"
         exit 1
       fi'' else "export \"CARDANO_NODE_SOCKET_PATH=${cfg.socketPath}\""}
-      exec ${cfg.package}/bin/cardano-tx-submit --socket-path "$CARDANO_NODE_SOCKET_PATH" \
+      exec ${cfg.package}/bin/cardano-tx-submit-webapi --socket-path "$CARDANO_NODE_SOCKET_PATH" \
             --genesis-file ${envConfig.genesisFile} \
             --port ${toString cfg.port} \
             --config ${builtins.toFile "tx-submit.json" (builtins.toJSON cfg.environment.txSubmitConfig)}

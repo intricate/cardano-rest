@@ -33,7 +33,7 @@ let
     defaultConfig = rec {
       services.cardano-tx-submit.socketPath = stateDir + "/node.socket";
     };
-    customConfig' = defaultConfig // customConfig;
+    customConfig' = lib.mkMerge [ defaultConfig customConfig ];
   in pkgs.callPackage ./nix/docker.nix {
     inherit (self) cardano-explorer-api;
     inherit (self) cardano-tx-submit-webapi;

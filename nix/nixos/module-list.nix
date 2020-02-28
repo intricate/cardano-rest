@@ -1,4 +1,4 @@
 [
   ./cardano-explorer-api-service.nix
-  ./cardano-tx-submitter-service.nix
+  ./cardano-tx-submit-service.nix
 ]
