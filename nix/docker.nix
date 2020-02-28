@@ -15,7 +15,7 @@
 #
 #    docker run -e NETWORK=testnet inputoutput/cardano-tx-submit:<TAG>
 #
-#  To launch with custom config, mount a dir containing config.json, genesis.json,
+#  To launch with custom config, mount a dir containing config.yaml, genesis.json,
 #  and topology.json into /config
 #
 #    docker run -v $PATH_TO/config:/config inputoutput/cardano-tx-submit:<TAG>
