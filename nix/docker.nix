@@ -16,7 +16,7 @@
 #    docker run -e NETWORK=testnet inputoutput/cardano-tx-submit:<TAG>
 #
 #  To launch with custom config, mount a dir containing config.yaml, genesis.json,
-#  and topology.json into /config
+#  into /config
 #
 #    docker run -v $PATH_TO/config:/config inputoutput/cardano-tx-submit:<TAG>
 #
@@ -113,7 +113,7 @@ let
            --socket-path /data/node.socket \
            --genesis-file /config/genesis.json \
            --port 8101 \
-           --config /data/config.yaml
+           --config /config/config.yaml
       ${clusterStatements}
       else
         echo "Please set a NETWORK environment variable to one of: mainnet/testnet"
