@@ -97,7 +97,7 @@ let
     config = {
       EntryPoint = [ "${entry-point}/bin/entry-point" ];
       ExposedPorts = {
-        "3001/tcp" = {};  # Cardano node p2p
+        "8100/tcp" = {};
       };
     };
   };
@@ -112,7 +112,7 @@ let
          exec ${cardano-tx-submit-webapi}/bin/cardano-tx-submit-webapi \
            --socket-path /data/node.socket \
            --genesis-file /config/genesis.json \
-           --port 3001 \
+           --port 8101 \
            --config /data/config.yaml
       ${clusterStatements}
       else
@@ -129,7 +129,7 @@ let
     config = {
       EntryPoint = [ "${entry-point}/bin/entry-point" ];
       ExposedPorts = {
-        "3001/tcp" = {};  # Cardano node p2p
+        "8101/tcp" = {};
       };
     };
   };
