@@ -9,7 +9,7 @@
 # cardano-tx-submit
 #  To launch with provided mainnet configuration
 #
-#    docker run -v /data -e NETWORK=mainnet inputoutput/cardano-tx-submit:<TAG>
+#    docker run -e NETWORK=mainnet inputoutput/cardano-tx-submit:<TAG>
 #
 #  To launch with provided testnet configuration
 #
