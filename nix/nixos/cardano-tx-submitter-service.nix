@@ -3,12 +3,12 @@
 # notes:
 # this service exposes an http port, and connects to a cardano-node over a unix socket
 let
-  cfg = config.services.cardano-tx-submit-api;
+  cfg = config.services.cardano-tx-submit;
   envConfig = cfg.environment;
   localPkgs = import ../. {};
 in {
   options = {
-    services.cardano-tx-submit-api = {
+    services.cardano-tx-submit = {
       enable = lib.mkEnableOption "enable the cardano-explorer tx submitter api";
       script = lib.mkOption {
         internal = true;
@@ -37,20 +37,20 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.cardano-tx-submit-api.script = pkgs.writeShellScript "cardano-tx-submit-api" ''
+    services.cardano-tx-submit.script = pkgs.writeShellScript "cardano-tx-submit" ''
       ${if (cfg.socketPath == null) then ''if [ -z "$CARDANO_NODE_SOCKET_PATH" ]
       then
         echo "You must set \$CARDANO_NODE_SOCKET_PATH"
         exit 1
       fi'' else "export \"CARDANO_NODE_SOCKET_PATH=${cfg.socketPath}\""}
-      exec ${cfg.package}/bin/cardano-tx-submit-api --socket-path "$CARDANO_NODE_SOCKET_PATH" \
+      exec ${cfg.package}/bin/cardano-tx-submit --socket-path "$CARDANO_NODE_SOCKET_PATH" \
             --genesis-file ${envConfig.genesisFile} \
             --port ${toString cfg.port} \
             --config ${builtins.toFile "tx-submit.json" (builtins.toJSON cfg.environment.txSubmitConfig)}
     '';
-    systemd.services.cardano-tx-submit-api = {
+    systemd.services.cardano-tx-submit = {
       serviceConfig = {
-        ExecStart = config.services.cardano-tx-submit-api.script;
+        ExecStart = config.services.cardano-tx-submit.script;
         DynamicUser = true;
       };
       wantedBy = [ "multi-user.target" ];
